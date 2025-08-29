@@ -12,6 +12,8 @@ import GoogleSignInSwift
 struct ContentView: View {
     @State private var email = ""
     @State private var password = ""
+    @State private var showAlert = false
+    @State private var alertMessage = ""
     
     private let emailIconName = "Icon_Email"
     private let passwordIconName = "Icon_Password"
@@ -92,15 +94,15 @@ struct ContentView: View {
                     //.scaledToFit()
                         .frame(height: 50)
                         .onTapGesture {
-                            // Trigger Google Sign-In from your ViewModel or directly
-                            print("Sign in with Google")
+                            alertMessage = "Google Sign-In is not yet implemented."
+                            showAlert = true
                         }
                     AppleSignInButtonView()
                     //.scaledToFit()
                         .frame(height: 50)
                         .onTapGesture {
-                            // Trigger Apple Sign-In from your ViewModel or directly
-                            print("Sign in with Apple")
+                            alertMessage = "Apple Sign-In is not yet implemented."
+                            showAlert = true
                         }
                     
                     
@@ -115,6 +117,9 @@ struct ContentView: View {
                     }
                 }
                 .padding()
+            }
+            .alert(isPresented: $showAlert) {
+                Alert(title: Text("Feature Not Implemented"), message: Text(alertMessage), dismissButton: .default(Text("OK")))
             }
         }
     }
