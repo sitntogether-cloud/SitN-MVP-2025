@@ -16,6 +16,7 @@ struct SignUpView: View {
     @State private var ageTouched = false
     @State private var phoneNumberTouched = false
     @State private var zipCodeTouched = false
+    @State private var isNavigationActive = false
 
     private var ageFormatter: NumberFormatter {
         let formatter = NumberFormatter()
@@ -39,7 +40,7 @@ struct SignUpView: View {
 
     var body: some View {
         NavigationView {
-            VStack {
+            ZStack(alignment: .bottom) {
                 Form {
                     Section(header: Text("Personal Information")) {
                         TextField("First Name", text: $viewModel.firstName, onEditingChanged: { editing in
@@ -95,19 +96,31 @@ struct SignUpView: View {
                     }
                 }
                 
-                Button(action: {
-                    // Create account action
-                }) {
-                    Text("Create Account")
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(Color.blue)
-                        .foregroundColor(.white)
-                        .clipShape(Capsule())
-                }
-                .disabled(!viewModel.isFormValid)
-                .padding()
+                VStack {
+                    NavigationLink(destination: CreateProfileView(), isActive: $isNavigationActive) { EmptyView() }
 
+                    Button(action: {
+                        if viewModel.isFormValid {
+                            self.isNavigationActive = true
+                        } else {
+                            self.firstNameTouched = true
+                            self.lastNameTouched = true
+                            self.emailTouched = true
+                            self.ageTouched = true
+                            self.phoneNumberTouched = true
+                            self.zipCodeTouched = true
+                        }
+                    }) {
+                        Text("Create Account")
+                            .frame(maxWidth: .infinity)
+                            .padding()
+                            .background(Color.blue)
+                            .foregroundColor(.white)
+                            .clipShape(Capsule())
+                    }
+                    .padding()
+                }
+                .background(Color(.systemBackground))
             }
             .navigationBarTitle("Create Account")
         }

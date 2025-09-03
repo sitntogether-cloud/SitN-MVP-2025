@@ -22,11 +22,6 @@ struct ContentView: View {
         
         NavigationView {
             ZStack{
-                LinearGradient(gradient: Gradient(colors: [Color(.lightBlue), Color(.darkerLightBlue)]),
-                               startPoint: .topLeading,
-                               endPoint: .bottomTrailing)
-                .edgesIgnoringSafeArea(.all) // Extend the gradient to fill the safe areas
-                
                 VStack {
                     Text("SitN")
                         .font(.largeTitle)
