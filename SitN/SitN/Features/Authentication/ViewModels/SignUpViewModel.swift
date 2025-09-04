@@ -36,7 +36,7 @@ class SignUpViewModel: ObservableObject {
             .map { Validators.isEmailValid($0) }
             .assign(to: \.isEmailValid, on: self)
             .store(in: &cancellables)
-        // TODO: Why is age not being validated?
+
         $age
             .map { Validators.isAgeValid($0) }
             .assign(to: \.isAgeValid, on: self)
@@ -46,7 +46,7 @@ class SignUpViewModel: ObservableObject {
             .map { Validators.isPhoneNumberValid($0) }
             .assign(to: \.isPhoneNumberValid, on: self)
             .store(in: &cancellables)
-        // TODO: Why is zipcode not being validated?
+
         $zipCode
             .map { Validators.isZipCodeValid($0) }
             .assign(to: \.isZipCodeValid, on: self)

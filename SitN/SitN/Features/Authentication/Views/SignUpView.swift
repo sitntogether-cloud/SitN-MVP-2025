@@ -39,59 +39,70 @@ struct SignUpView: View {
     }
 
     var body: some View {
-        NavigationView {
-            ZStack(alignment: .bottom) {
+        ZStack {
+            Color(.systemGroupedBackground).edgesIgnoringSafeArea(.all)
+            VStack {
                 Form {
                     Section(header: Text("Personal Information")) {
-                        TextField("First Name", text: $viewModel.firstName, onEditingChanged: { editing in
-                            if !editing { self.firstNameTouched = true }
-                        })
+                        TextField("First Name", text: $viewModel.firstName, onEditingChanged: { isEditing in
+                            if !isEditing {
+                                self.firstNameTouched = true
+                            }
+                        }, onCommit: {})
                         if !viewModel.isFirstNameValid && firstNameTouched {
-                            Text("First name cannot be empty").font(.caption).foregroundColor(.red)
+                            Text("First name cannot be empty.").foregroundColor(.red).font(.caption)
                         }
                         
-                        TextField("Last Name", text: $viewModel.lastName, onEditingChanged: { editing in
-                            if !editing { self.lastNameTouched = true }
-                        })
+                        TextField("Last Name", text: $viewModel.lastName, onEditingChanged: { isEditing in
+                            if !isEditing {
+                                self.lastNameTouched = true
+                            }
+                        }, onCommit: {})
                         if !viewModel.isLastNameValid && lastNameTouched {
-                            Text("Last name cannot be empty").font(.caption).foregroundColor(.red)
+                            Text("Last name cannot be empty.").foregroundColor(.red).font(.caption)
                         }
                         
-                        TextField("Email", text: $viewModel.email, onEditingChanged: { editing in
-                            if !editing { self.emailTouched = true }
-                        })
+                        TextField("Email", text: $viewModel.email, onEditingChanged: { isEditing in
+                            if !isEditing {
+                                self.emailTouched = true
+                            }
+                        }, onCommit: {})
                             .keyboardType(.emailAddress)
                             .autocapitalization(.none)
                         if !viewModel.isEmailValid && emailTouched {
-                            Text("Enter a valid email").font(.caption).foregroundColor(.red)
+                            Text("Please enter a valid email address.").foregroundColor(.red).font(.caption)
                         }
                         
-                        TextField("Age", value: $viewModel.age, formatter: ageFormatter)
-                            .keyboardType(.numberPad)
-                            .onTapGesture {
+                        TextField("Age", value: $viewModel.age, formatter: ageFormatter, onEditingChanged: { isEditing in
+                            if !isEditing {
                                 self.ageTouched = true
                             }
+                        }, onCommit: {})
+                            .keyboardType(.numberPad)
                         if !viewModel.isAgeValid && ageTouched {
-                            Text("Enter a valid age (0-100)").font(.caption).foregroundColor(.red)
+                            Text("Please enter a valid age.").foregroundColor(.red).font(.caption)
                         }
                     }
-
+                    
                     Section(header: Text("Contact Information")) {
-                        TextField("Phone Number", text: $viewModel.phoneNumber, onEditingChanged: { editing in
-                            if !editing { self.phoneNumberTouched = true }
-                        })
+                        TextField("Phone Number", text: $viewModel.phoneNumber, onEditingChanged: { isEditing in
+                            if !isEditing {
+                                self.phoneNumberTouched = true
+                            }
+                        }, onCommit: {})
                             .keyboardType(.phonePad)
                         if !viewModel.isPhoneNumberValid && phoneNumberTouched {
-                            Text("Enter a valid phone number").font(.caption).foregroundColor(.red)
+                            Text("Please enter a valid phone number.").foregroundColor(.red).font(.caption)
                         }
                         
-                        TextField("Zip Code", text: zipCodeBinding)
-                            .keyboardType(.numberPad)
-                            .onTapGesture {
+                        TextField("Zip Code", text: zipCodeBinding, onEditingChanged: { isEditing in
+                            if !isEditing {
                                 self.zipCodeTouched = true
                             }
+                        }, onCommit: {})
+                            .keyboardType(.numberPad)
                         if !viewModel.isZipCodeValid && zipCodeTouched {
-                            Text("Enter a valid 5-digit zip code").font(.caption).foregroundColor(.red)
+                            Text("Please enter a valid zip code.").foregroundColor(.red).font(.caption)
                         }
                     }
                 }
@@ -120,13 +131,15 @@ struct SignUpView: View {
                     }
                     .padding()
                 }
-                .background(Color(.systemBackground))
+                .background(Color.clear)
             }
-            .navigationBarTitle("Create Account")
         }
+        .navigationBarTitle("Create Account")
     }
 }
 
 #Preview {
-    SignUpView()
+    NavigationView {
+        SignUpView()
+    }
 }

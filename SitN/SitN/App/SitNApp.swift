@@ -9,9 +9,19 @@ import SwiftUI
 
 @main
 struct SitNApp: App {
+    @StateObject private var sessionManager = SessionManager()
+
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            if sessionManager.isLoggedIn {
+                NavigationView {
+                    HomePageView()
+                }
+                .environmentObject(sessionManager)
+            } else {
+                LogInView()
+                    .environmentObject(sessionManager)
+            }
         }
     }
 }
