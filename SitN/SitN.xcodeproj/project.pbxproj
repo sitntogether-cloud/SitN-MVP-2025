@@ -34,9 +34,25 @@
 		8F2C8B0F2E3EA88A00D5FC12 /* SitNUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SitNUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		8F2C8B8A2E621AD800D5FC12 /* Exceptions for "SitN" folder in "SitN" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				App/README.md,
+				Features/Authentication/README.md,
+				Features/CommonUI/README.md,
+				Features/README.md,
+			);
+			target = 8F2C8AF72E3EA88800D5FC12 /* SitN */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		8F2C8AFA2E3EA88900D5FC12 /* SitN */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				8F2C8B8A2E621AD800D5FC12 /* Exceptions for "SitN" folder in "SitN" target */,
+			);
 			path = SitN;
 			sourceTree = "<group>";
 		};

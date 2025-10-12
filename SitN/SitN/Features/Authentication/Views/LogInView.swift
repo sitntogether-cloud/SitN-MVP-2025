@@ -9,22 +9,34 @@ import SwiftUI
 import GoogleSignIn
 import GoogleSignInSwift
 
-struct ContentView: View {
+struct LogInView: View {
+    @EnvironmentObject var sessionManager: SessionManager
     @State private var email = ""
     @State private var password = ""
+    @State private var showAlert = false
+    @State private var alertMessage = ""
+    @State private var emailTouched = false
+    @State private var passwordTouched = false
     
-    private let emailIconName = "Icon_Email"
-    private let passwordIconName = "Icon_Password"
+    private var isFormValid: Bool {
+        !email.isEmpty && !password.isEmpty
+    }
+    
+    private var passwordBinding: Binding<String> {
+        Binding<String>(
+            get: { self.password },
+            set: {
+                self.password = $0
+                self.passwordTouched = true
+            }
+        )
+    }
 
     var body: some View {
         
         NavigationView {
             ZStack{
-                LinearGradient(gradient: Gradient(colors: [Color(.lightBlue), Color(.darkerLightBlue)]),
-                               startPoint: .topLeading,
-                               endPoint: .bottomTrailing)
-                .edgesIgnoringSafeArea(.all) // Extend the gradient to fill the safe areas
-                
+                Color(.systemGroupedBackground).edgesIgnoringSafeArea(.all)
                 VStack {
                     Text("SitN")
                         .font(.largeTitle)
@@ -34,7 +46,7 @@ struct ContentView: View {
                     HStack {
                         Image(systemName: "envelope")
                             .foregroundColor(.gray)
-                        TextField("Email", text: $email)
+                        TextField("Email", text: $email, onEditingChanged: { _ in self.emailTouched = true }, onCommit: {})
                     }
                     .padding()
                     .overlay(
@@ -46,12 +58,14 @@ struct ContentView: View {
                     .padding(.top, 75)
                     .padding(.bottom, 10)
                     
-                    
+                    if !isFormValid && emailTouched && email.isEmpty {
+                        Text("Email cannot be empty.").foregroundColor(.red).font(.caption)
+                    }
                     
                     HStack {
                         Image(systemName: "lock")
                             .foregroundColor(.gray)
-                        SecureField("Password", text: $password)
+                        SecureField("Password", text: passwordBinding)
                     }
                     .padding()
                     .overlay(
@@ -62,10 +76,17 @@ struct ContentView: View {
                     )
                     .padding(.bottom, 50)
                     
-                    
+                    if !isFormValid && passwordTouched && password.isEmpty {
+                        Text("Password cannot be empty.").foregroundColor(.red).font(.caption)
+                    }
                     
                     Button(action: {
-                        // Mock action
+                        if isFormValid {
+                            sessionManager.isLoggedIn = true
+                        } else {
+                            self.emailTouched = true
+                            self.passwordTouched = true
+                        }
                     }) {
                         Text("Sign In")
                             .font(.headline)
@@ -92,15 +113,15 @@ struct ContentView: View {
                     //.scaledToFit()
                         .frame(height: 50)
                         .onTapGesture {
-                            // Trigger Google Sign-In from your ViewModel or directly
-                            print("Sign in with Google")
+                            alertMessage = "Google Sign-In is not yet implemented."
+                            showAlert = true
                         }
                     AppleSignInButtonView()
                     //.scaledToFit()
                         .frame(height: 50)
                         .onTapGesture {
-                            // Trigger Apple Sign-In from your ViewModel or directly
-                            print("Sign in with Apple")
+                            alertMessage = "Apple Sign-In is not yet implemented."
+                            showAlert = true
                         }
                     
                     
@@ -116,10 +137,13 @@ struct ContentView: View {
                 }
                 .padding()
             }
+            .alert(isPresented: $showAlert) {
+                Alert(title: Text("Feature Not Implemented"), message: Text(alertMessage), dismissButton: .default(Text("OK")))
+            }
         }
     }
 }
 
 #Preview {
-    ContentView()
+    LogInView()
 }
