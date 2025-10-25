@@ -9,4 +9,6 @@ import Combine
 
 class SessionManager: ObservableObject {
     @Published var isLoggedIn = false
+    @Published var popToRoot = false
+    @Published var userName: String? = nil
 }

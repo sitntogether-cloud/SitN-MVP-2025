@@ -38,50 +38,58 @@ struct LogInView: View {
             ZStack{
                 Color(.systemGroupedBackground).edgesIgnoringSafeArea(.all)
                 VStack {
-                    Text("SitN")
-                        .font(.largeTitle)
-                        .fontWeight(.bold)
-                        .padding(.vertical,75)
+                    Image("Logo")
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(height: 100)
+                        .padding(.vertical, 50)
                     
-                    HStack {
-                        Image(systemName: "envelope")
-                            .foregroundColor(.gray)
-                        TextField("Email", text: $email, onEditingChanged: { _ in self.emailTouched = true }, onCommit: {})
+                    VStack {
+                        HStack {
+                            Image(systemName: "envelope")
+                                .foregroundColor(.gray)
+                            TextField("Email", text: $email, onEditingChanged: { _ in self.emailTouched = true }, onCommit: {})
+                        }
+                        .padding()
+                        .overlay(
+                            Rectangle()
+                                .frame(height: 1)
+                                .foregroundColor(email.isEmpty && emailTouched ? .red : .gray),
+                            alignment: .bottom
+                        )
+                        
+                        if email.isEmpty && emailTouched {
+                            Text("Email cannot be empty.").foregroundColor(.red).font(.caption)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                        }
                     }
-                    .padding()
-                    .overlay(
-                        Rectangle()
-                            .frame(height: 1)
-                            .foregroundColor(.gray),
-                        alignment: .bottom
-                    )
                     .padding(.top, 75)
                     .padding(.bottom, 10)
                     
-                    if !isFormValid && emailTouched && email.isEmpty {
-                        Text("Email cannot be empty.").foregroundColor(.red).font(.caption)
+                    VStack {
+                        HStack {
+                            Image(systemName: "lock")
+                                .foregroundColor(.gray)
+                            SecureField("Password", text: passwordBinding)
+                        }
+                        .padding()
+                        .overlay(
+                            Rectangle()
+                                .frame(height: 1)
+                                .foregroundColor(password.isEmpty && passwordTouched ? .red : .gray),
+                            alignment: .bottom
+                        )
+
+                        if password.isEmpty && passwordTouched {
+                            Text("Password cannot be empty.").foregroundColor(.red).font(.caption)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                        }
                     }
-                    
-                    HStack {
-                        Image(systemName: "lock")
-                            .foregroundColor(.gray)
-                        SecureField("Password", text: passwordBinding)
-                    }
-                    .padding()
-                    .overlay(
-                        Rectangle()
-                            .frame(height: 1)
-                            .foregroundColor(.gray),
-                        alignment: .bottom
-                    )
                     .padding(.bottom, 50)
-                    
-                    if !isFormValid && passwordTouched && password.isEmpty {
-                        Text("Password cannot be empty.").foregroundColor(.red).font(.caption)
-                    }
                     
                     Button(action: {
                         if isFormValid {
+                            sessionManager.userName = "John"
                             sessionManager.isLoggedIn = true
                         } else {
                             self.emailTouched = true
@@ -89,15 +97,10 @@ struct LogInView: View {
                         }
                     }) {
                         Text("Sign In")
-                            .font(.headline)
-                            .foregroundColor(.white)
-                            .padding()
-                            .frame(width: 375, height: 50)
-                            .background(Color.blue)
-                            .cornerRadius(15.0)
                     }
+                    .buttonStyle(PrimaryButtonStyle())
+                    .disabled(!isFormValid)
                     .padding(.top, 50)
-                    .frame(maxWidth: .infinity)
                     
                     Spacer()
                     
@@ -130,7 +133,7 @@ struct LogInView: View {
                     
                     Spacer()
                     
-                    NavigationLink(destination: SignUpView()) {
+                    NavigationLink(destination: OnboardingView()) {
                         Text("Don't have an account?").foregroundColor(.gray)
                         Text("Sign up").foregroundColor(.blue)
                     }

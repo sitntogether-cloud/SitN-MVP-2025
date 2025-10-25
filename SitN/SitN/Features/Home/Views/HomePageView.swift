@@ -22,33 +22,68 @@ enum Cuisine: String, CaseIterable, Identifiable {
 struct HomePageView: View {
     @EnvironmentObject var sessionManager: SessionManager
     @State private var selectedCuisine: Cuisine?
+    @State private var isCuisineSelected = false
+
+    private var welcomeMessage: String {
+        if let name = sessionManager.userName {
+            return "WHERE DO YOU WANT TO SITN TODAY, \(name.uppercased())?"
+        } else {
+            return "WHERE DO YOU WANT TO SITN TODAY?"
+        }
+    }
 
     var body: some View {
         NavigationView {
             ZStack {
                 Color(.systemGroupedBackground).edgesIgnoringSafeArea(.all)
                 VStack {
-                    Text("SitN")
-                        .font(.largeTitle)
-                        .fontWeight(.bold)
+                    Image("Logo")
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(height: 50)
                         .navigationBarBackButtonHidden(true)
-                    
+
                     Spacer()
-                    
-                    Text("WHERE DO YOU WANT TO SITN TODAY?")
+                        .frame(maxHeight: 50)
+
+                    Text(welcomeMessage)
                         .font(.largeTitle)
                         .fontWeight(.bold)
                         .multilineTextAlignment(.center)
                         .padding()
+                        .padding(.bottom, 100)
 
-                    Picker("Select Cuisine", selection: $selectedCuisine) {
+                    Picker(selection: $selectedCuisine) {
                         Text("Select Cuisine").tag(nil as Cuisine?)
                         ForEach(Cuisine.allCases) { cuisine in
                             Text(cuisine.rawValue).tag(cuisine as Cuisine?)
                         }
+                    } label: {
+                        HStack {
+                            Text(selectedCuisine?.rawValue ?? "Select Cuisine")
+                                .font(.headline)
+                            Spacer()
+                            Image(systemName: "chevron.down")
+                        }
+                        .padding()
+                        .background(Color.white)
+                        .cornerRadius(10)
+                        .shadow(radius: 2)
                     }
                     .pickerStyle(MenuPickerStyle())
-                    .padding()
+                    .onChange(of: selectedCuisine) { newValue in
+                        if newValue != nil {
+                            isCuisineSelected = true
+                        }
+                    }
+                    
+                    if let selectedCuisine {
+                        NavigationLink(
+                            destination: RestaurantSelectionView(cuisine: selectedCuisine),
+                            isActive: $isCuisineSelected,
+                            label: { EmptyView() }
+                        )
+                    }
                     
                     Spacer()
                     
@@ -88,6 +123,13 @@ struct HomePageView: View {
             }
             .navigationBarTitle("")
             .navigationBarHidden(true)
+            .onReceive(sessionManager.$popToRoot) { shouldPop in
+                if shouldPop {
+                    isCuisineSelected = false
+                    selectedCuisine = nil
+                    sessionManager.popToRoot = false // Reset the flag
+                }
+            }
         }
     }
 }

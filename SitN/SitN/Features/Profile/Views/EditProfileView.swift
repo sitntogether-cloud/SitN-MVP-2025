@@ -6,20 +6,50 @@
 //
 
 import SwiftUI
+import PhotosUI
 
 struct ProfileView: View {
     @StateObject private var viewModel = ProfileViewModel()
     @State private var isEditing = false
 
+    // Temporary storage for original values
+    @State private var originalHeight = ""
+    @State private var originalEthnicity = ""
+    @State private var originalHometown = ""
+    @State private var originalOccupation = ""
+    @State private var originalAstrologicalSign = ""
+
+    @State private var selectedPhoto: PhotosPickerItem?
+    @State private var profileImage: Image?
+
     var body: some View {
         ScrollView {
             VStack {
-                Image(systemName: "person.circle.fill")
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(width: 150, height: 150)
-                    .foregroundColor(.gray)
-                    .padding(.top, 50)
+                PhotosPicker(selection: $selectedPhoto, matching: .images) {
+                    if let profileImage {
+                        profileImage
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                            .frame(width: 150, height: 150)
+                            .clipShape(Circle())
+                    } else {
+                        Image(systemName: "person.circle.fill")
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: 150, height: 150)
+                            .foregroundColor(.gray)
+                    }
+                }
+                .padding(.top, 50)
+                .onChange(of: selectedPhoto) { newItem in
+                    Task {
+                        if let data = try? await newItem?.loadTransferable(type: Data.self) {
+                            if let uiImage = UIImage(data: data) {
+                                profileImage = Image(uiImage: uiImage)
+                            }
+                        }
+                    }
+                }
 
                 CardView(
                     headline: "Latest Activity",
@@ -91,20 +121,44 @@ struct ProfileView: View {
                     }
                 }
                 .padding()
-                .background(Color(UIColor.systemBackground))
+                .background(isEditing ? Color(.systemGray6) : Color(UIColor.systemBackground))
                 .cornerRadius(10)
                 .padding(.horizontal)
-
-
                 
                 Spacer()
             }
         }
         .navigationTitle("My Profile")
         .navigationBarTitleDisplayMode(.inline)
-        .navigationBarItems(trailing: Button(isEditing ? "Done" : "Edit") {
-            isEditing.toggle()
-        })
+        .navigationBarItems(trailing:
+            HStack {
+                if isEditing {
+                    Button("Cancel") {
+                        // Revert changes
+                        viewModel.height = originalHeight
+                        viewModel.ethnicity = originalEthnicity
+                        viewModel.hometown = originalHometown
+                        viewModel.occupation = originalOccupation
+                        viewModel.astrologicalSign = originalAstrologicalSign
+                        isEditing = false
+                    }
+                    Button("Save") {
+                        // Save changes logic would go here
+                        isEditing = false
+                    }
+                } else {
+                    Button("Edit") {
+                        // Store original values
+                        originalHeight = viewModel.height
+                        originalEthnicity = viewModel.ethnicity
+                        originalHometown = viewModel.hometown
+                        originalOccupation = viewModel.occupation
+                        originalAstrologicalSign = viewModel.astrologicalSign
+                        isEditing = true
+                    }
+                }
+            }
+        )
         .onAppear {
             viewModel.loadUserData()
         }
