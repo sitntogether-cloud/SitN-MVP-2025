@@ -1,6 +1,6 @@
 # SitN MVP 2025
 
-This is a SwiftUI project for SitN, a restaurant seating availability app.
+This is a SwiftUI project for SitN.
 
 ## How to Run the Project Locally
 
