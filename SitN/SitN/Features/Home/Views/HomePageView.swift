@@ -44,7 +44,7 @@ struct HomePageView: View {
                         .navigationBarBackButtonHidden(true)
 
                     Spacer()
-                        .frame(maxHeight: 50)
+                        .frame(maxHeight: 30)
 
                     Text(welcomeMessage)
                         .font(.largeTitle)
@@ -85,19 +85,7 @@ struct HomePageView: View {
                         )
                     }
                     
-                    Spacer()
-                    
-                    Button(action: {
-                        sessionManager.isLoggedIn = false
-                    }) {
-                        Text("Sign Out")
-                            .foregroundColor(.red)
-                    }
-                    .padding()
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 10)
-                            .stroke(Color.red, lineWidth: 1)
-                    )
+
                 }
                 
                 VStack {
@@ -120,6 +108,29 @@ struct HomePageView: View {
                         .padding()
                     }
                 }
+
+                HStack {
+                    Spacer()
+                    ZStack {
+                        Image(systemName: "bell.fill")
+                            .resizable()
+                            .frame(width: 25, height: 25)
+                            .foregroundColor(.gray)
+                        
+                        // Badge
+                        ZStack {
+                            Circle()
+                                .fill(Color.red)
+                            Text("3") // Mock number of invites
+                                .font(.caption2)
+                                .foregroundColor(.white)
+                        }
+                        .frame(width: 15, height: 15)
+                        .offset(x: 10, y: -10)
+                    }
+                }
+                .padding()
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
             }
             .navigationBarTitle("")
             .navigationBarHidden(true)

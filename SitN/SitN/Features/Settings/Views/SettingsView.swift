@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct SettingsView: View {
+    @EnvironmentObject var sessionManager: SessionManager
     @Environment(\.presentationMode) var presentationMode
     @StateObject private var viewModel = SettingsViewModel()
     @State private var showAlert = false
@@ -36,6 +37,15 @@ struct SettingsView: View {
                             }
                         }
                     }
+
+                    Section {
+                        Button(action: {
+                            sessionManager.isLoggedIn = false
+                        }) {
+                            Text("Sign Out")
+                                .foregroundColor(.red)
+                        }
+                    }
                 }
                 
                 Button(action: {
@@ -43,12 +53,8 @@ struct SettingsView: View {
                     self.showAlert = true
                 }) {
                     Text("Save")
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(Color.blue)
-                        .foregroundColor(.white)
-                        .clipShape(Capsule())
                 }
+                .buttonStyle(PrimaryButtonStyle())
                 .padding()
             }
             .navigationTitle("Settings")
